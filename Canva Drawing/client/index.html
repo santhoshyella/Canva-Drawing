@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Canvas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Ensure selectTool is available immediately (will be redefined in main.js)
+        window.selectTool = window.selectTool || function(tool) {
+            console.log('selectTool called early:', tool);
+            // Store the tool selection to apply when main.js loads
+            window._pendingTool = tool;
+        };
+    </script>
+</head>
+<body>
+    <div id="app">
+        <!-- Top Toolbar -->
+        <div class="toolbar top-toolbar">
+            <div class="toolbar-section">
+                <button class="tool-btn" id="select-tool" data-tool="select" title="Select (V)" onclick="if(window.selectTool) window.selectTool('select'); return false;">
+                    <i class="fas fa-mouse-pointer"></i>
+                </button>
+                <button class="tool-btn" id="brush-tool" data-tool="brush" title="Brush (B)" onclick="if(window.selectTool) window.selectTool('brush'); return false;">
+                    <i class="fas fa-paint-brush"></i>
+                </button>
+                <button class="tool-btn" id="eraser-tool" data-tool="eraser" title="Eraser (E)" onclick="if(window.selectTool) window.selectTool('eraser'); return false;">
+                    <i class="fas fa-eraser"></i>
+                </button>
+                <button class="tool-btn" id="line-tool" data-tool="line" title="Line (L)" onclick="if(window.selectTool) window.selectTool('line'); return false;">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="tool-btn" id="rect-tool" data-tool="rectangle" title="Rectangle (R)" onclick="if(window.selectTool) window.selectTool('rectangle'); return false;">
+                    <i class="fas fa-square"></i>
+                </button>
+                <button class="tool-btn" id="circle-tool" data-tool="circle" title="Circle (C)" onclick="if(window.selectTool) window.selectTool('circle'); return false;">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <button class="tool-btn" id="text-tool" data-tool="text" title="Text (T)" onclick="if(window.selectTool) window.selectTool('text'); return false;">
+                    <i class="fas fa-font"></i>
+                </button>
+            </div>
+            
+            <div class="toolbar-section">
+                <button class="tool-btn" id="undo-btn" title="Undo (Ctrl+Z)">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="tool-btn" id="redo-btn" title="Redo (Ctrl+Shift+Z)">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="tool-btn" id="clear-btn" title="Clear Canvas">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Left Sidebar - Properties Panel -->
+        <div class="sidebar properties-panel">
+            <div class="panel-header">
+                <h3>Properties</h3>
+            </div>
+            
+            <div class="panel-section">
+                <label>Stroke Color</label>
+                <div class="color-picker">
+                    <input type="color" id="color-picker" value="#000000">
+                    <div class="color-presets" id="color-presets"></div>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <label>Stroke Width</label>
+                <div class="slider-container">
+                    <input type="range" id="stroke-width" min="1" max="50" value="5">
+                    <span id="stroke-width-value">5</span>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <label>Opacity</label>
+                <div class="slider-container">
+                    <input type="range" id="opacity" min="0" max="100" value="100">
+                    <span id="opacity-value">100%</span>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <label>Zoom</label>
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoom-out">−</button>
+                    <span id="zoom-value">100%</span>
+                    <button class="zoom-btn" id="zoom-in">+</button>
+                    <button class="zoom-btn" id="zoom-fit">Fit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Canvas Area -->
+        <div class="canvas-container">
+            <canvas id="drawing-canvas"></canvas>
+            <div id="cursors-layer"></div>
+        </div>
+
+        <!-- Right Sidebar - Users Panel -->
+        <div class="sidebar users-panel">
+            <div class="panel-header">
+                <h3>Collaborators</h3>
+                <span id="user-count">0</span>
+            </div>
+            <div id="users-list"></div>
+        </div>
+
+        <!-- User Name Modal -->
+        <div id="name-modal" class="modal">
+            <div class="modal-content">
+                <h2>Enter Your Name</h2>
+                <input type="text" id="user-name-input" placeholder="Your name" maxlength="20">
+                <button id="join-btn" class="primary-btn">Join Canvas</button>
+            </div>
+        </div>
+
+        <!-- Room Info -->
+        <div class="room-info">
+            <span>Room: <span id="room-id-display">Loading...</span></span>
+            <button id="copy-room-btn" class="icon-btn" title="Copy Room Link">
+                <i class="fas fa-copy"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="canvas.js"></script>
+    <script src="websocket.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
+
